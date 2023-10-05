@@ -4,10 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/lib/pq"
 )
 
 type DB struct{
-	dbase *sql.DB
+	DB *sql.DB
 }
 
 var dbConn = &DB{}
@@ -32,7 +37,7 @@ func ConnectPostgres(dsn string) (*DB, error) {
 		return nil, err
 	}
 
-	dbConn.dbase = d
+	dbConn.DB = d
 	return dbConn, nil
 }
 

@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/bhuvanesh/go-coffee-server/db"
+	"github.com/bhuvanesh/go-coffee-server/router"
+	"github.com/bhuvanesh/go-coffee-server/services"
 	"github.com/joho/godotenv"
 )
 
@@ -16,6 +18,7 @@ type Config struct {
 
 type Application struct{
 	Config Config
+	Models services.Models
 }
 
 func (app *Application) Serve() error {
@@ -25,7 +28,7 @@ func (app *Application) Serve() error {
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", app.Config.Port),
-		//TODO: add router
+		Handler: router.Routes(),
 	}
 
 	return srv.ListenAndServe()
@@ -51,11 +54,11 @@ func main(){
 		log.Fatal("Cannot connect to database")
 	}
 
-	defer dbConn.dbase.close()
+	defer dbConn.DB.Close()
 
 	app := &Application{
 		Config: cfg,
-		//Add Models later
+		Models: services.New(dbConn.DB),
 	}
 
 	err = app.Serve()
